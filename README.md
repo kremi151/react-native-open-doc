@@ -11,8 +11,21 @@ Share files on Android (for iOS use the react-native Share.share({ url: selected
 
 ### Mostly automatic installation
 
-`$ react-native link react-native-open-doc`
+1. `$ react-native link react-native-open-doc`
 
+2. [Define a FileProvider](https://developer.android.com/reference/android/support/v4/content/FileProvider)
+  
+  Note that the authorities value should be `<your package name>.provider`, for example:
+
+  ```
+  <provider
+              android:name="android.support.v4.content.FileProvider"
+              android:authorities="com.mydomain.provider"
+              android:exported="false"
+              android:grantUriPermissions="true">
+              ...
+  </provider>
+  ```
 ### Manual installation
 
 
@@ -37,7 +50,7 @@ Share files on Android (for iOS use the react-native Share.share({ url: selected
   	```
       compile project(':react-native-open-doc')
   	```
-
+4. Define a FileProvider
 
 ## Usage
 ```javascript

@@ -1,7 +1,9 @@
 
 # react-native-open-doc
 
-Open files stored on device - Android and iOS. 
+Open files stored on device for preview - Android and iOS. 
+
+Pick files using native file pickers for iOS and Android (UIDocumentPickerViewController / Intent.ACTION_OPEN_DOCUMENT)
 
 Share files on Android (for iOS use the react-native Share.share({ url: selectedUri }) api).
 
@@ -58,5 +60,13 @@ import RNCOpenDoc from 'react-native-open-doc';
 
 RNCOpenDoc.open(pathToFile);
 RNCOpenDoc.share(pathToFile);
+RNCOpenDoc.pick(null, (error, files) => {
+    if (error) {
+        console.log(`error in RNCOpenDoc.pick ${error}`);
+    }
+    else if (files) {
+    	this.handleSelectedFiles(files);
+    }
+});
 ```
   

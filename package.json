@@ -11,11 +11,11 @@
     "url": "git+https://github.com/capriza/react-native-open-doc.git"
   },
   "keywords": [
-    "react-native"
+    "react-native", "documents", "files", "viewer", "picker", "share"
   ],
   "author": "Guy Blank",
   "license": "MIT",
   "peerDependencies": {
-    "react-native": "^0.41.2"
+    "react-native": ">=0.50.0"
   }
 }

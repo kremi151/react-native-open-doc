@@ -1,6 +1,6 @@
 {
   "name": "react-native-open-doc",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "React Native module for openning documents",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,12 @@
     "url": "git+https://github.com/capriza/react-native-open-doc.git"
   },
   "keywords": [
-    "react-native", "documents", "files", "viewer", "picker", "share"
+    "react-native",
+    "documents",
+    "files",
+    "viewer",
+    "picker",
+    "share"
   ],
   "author": "Guy Blank",
   "license": "MIT",

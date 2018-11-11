@@ -144,10 +144,7 @@ public class RNCOpenDocModule extends ReactContextBaseJavaModule implements Acti
     intent.setType("*/*");
 
     if (args != null && !args.isNull("fileTypes")) {
-      ReadableArray filetypes = args.getArray("fileTypes");
-      if (filetypes.size() > 0) {
-        intent.setType(filetypes.getString(0));
-      }
+      intent.putExtra(Intent.EXTRA_MIME_TYPES, args.getArray("fileTypes").toArrayList());
     }
 
     this.callback = callback;

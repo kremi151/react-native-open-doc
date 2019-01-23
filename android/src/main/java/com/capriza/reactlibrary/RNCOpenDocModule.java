@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.webkit.MimeTypeMap;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -26,6 +29,7 @@ import com.facebook.react.bridge.WritableNativeArray;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.util.List;
 
 public class RNCOpenDocModule extends ReactContextBaseJavaModule implements ActivityEventListener {
   private static final String LOG_TAG = "RNCOpenDoc";
@@ -71,7 +75,7 @@ public class RNCOpenDocModule extends ReactContextBaseJavaModule implements Acti
   }
 
   @ReactMethod
-  public void open(String path) {
+  public void open(String path, final Promise promise) {
     if (path.startsWith("file://")) {
       path = path.replace("file://", "");
     }
@@ -98,9 +102,19 @@ public class RNCOpenDocModule extends ReactContextBaseJavaModule implements Acti
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-      getReactApplicationContext().startActivity(intent);
+      //Verify There is an App to Receive the Intent
+      PackageManager packageManager = getReactApplicationContext().getPackageManager();
+      List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+      boolean isIntentSafe = activities.size() > 0;
+      if (isIntentSafe) {
+        getReactApplicationContext().startActivity(intent);
+        promise.resolve(true);
+      } else {
+        promise.reject(new Error("There is no App installed that can open this document"));
+      }
     } catch(ActivityNotFoundException ex) {
       Log.e(LOG_TAG, "can't open document", ex);
+      promise.reject(new Error("can't open document"));
     }
   }
 

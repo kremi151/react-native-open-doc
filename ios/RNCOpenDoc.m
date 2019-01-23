@@ -28,23 +28,27 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_METHOD(open: (NSURL *)path)
+RCT_EXPORT_METHOD(open: (NSURL *)path resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    NSString *relPath = path.relativePath;
+    @try {
+        NSString *relPath = path.relativePath;
 #if __has_include("NSTiffSplitter.h")
-    if ([relPath hasSuffix:@".tif"] || [relPath hasSuffix:@".tiff"]){
-        NSTiffSplitter* tiffSplitter = [[NSTiffSplitter alloc] initWithImageUrl:path usingMapping:YES];
-        if (tiffSplitter.countOfImages > 1) {
-            [self openWith:path];
-            return;
+        if ([relPath hasSuffix:@".tif"] || [relPath hasSuffix:@".tiff"]){
+            NSTiffSplitter* tiffSplitter = [[NSTiffSplitter alloc] initWithImageUrl:path usingMapping:YES];
+            if (tiffSplitter.countOfImages > 1) {
+                [self openWith:path];
+                return;
+            }
         }
-    }
 #endif
-    self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:path];
-    self.documentInteractionController.delegate = self;
-    BOOL fileOpenSuccess = [self.documentInteractionController presentPreviewAnimated:YES];
-    if (!fileOpenSuccess) {
-        [self openWith:path];
+        self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:path];
+        self.documentInteractionController.delegate = self;
+        BOOL fileOpenSuccess = [self.documentInteractionController presentPreviewAnimated:YES];
+        if (!fileOpenSuccess) {
+            [self openWith:path];
+        }
+    } @finally {
+        resolve(@true);
     }
 }
 

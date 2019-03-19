@@ -69,4 +69,11 @@ RNCOpenDoc.pick(null, (error, files) => {
     }
 });
 ```
-  
+ 
+`files` is an array of objects with the following properties:
+
+- `fileName` (string) e.g. "foo.html"
+- `fileSize` (number) (iOS only) File size in bytes
+- `mimeType` (string) (iOS only) e.g. "text/html"
+- `uri` (string) Example (iOS): "file:///private/var/mobile/Containers/Data/Application/.../foo.html"
+

@@ -93,6 +93,29 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options callback:(RCTResponseSenderBlock)
     [rootViewController presentViewController:docPicker animated:YES completion:nil];
 }
 
+// Determine MIME type: Taken from https://stackoverflow.com/a/32389490/5339584
+- (NSString*) determineMimeType: (NSString *) path {
+    // NSURL will read the entire file and may exceed available memory if the file is large enough. Therefore, we will write the first fiew bytes of the file to a head-stub for NSURL to get the MIMEType from.
+    NSFileHandle *readFileHandle = [NSFileHandle fileHandleForReadingAtPath:path];
+    NSData *fileHead = [readFileHandle readDataOfLength:100]; // we probably only need 2 bytes. we'll get the first 100 instead.
+
+    NSString *tempPath = [NSHomeDirectory() stringByAppendingPathComponent: @"tmp/fileHead.tmp"];
+
+    [[NSFileManager defaultManager] removeItemAtPath:tempPath error:nil]; // delete any existing version of fileHead.tmp
+    if ([fileHead writeToFile:tempPath atomically:YES])
+    {
+        NSURL* fileUrl = [NSURL fileURLWithPath:path];
+        NSURLRequest* fileUrlRequest = [[NSURLRequest alloc] initWithURL:fileUrl cachePolicy:NSURLCacheStorageNotAllowed timeoutInterval:.1];
+
+        NSError* error = nil;
+        NSURLResponse* response = nil;
+        [NSURLConnection sendSynchronousRequest:fileUrlRequest returningResponse:&response error:&error];
+        [[NSFileManager defaultManager] removeItemAtPath:tempPath error:nil];
+        return [response MIMEType];
+    }
+    return nil;
+}
+
 - (void)getResultFromUrl:(NSURL *)url error:(NSError **)outError {
     [url startAccessingSecurityScopedResource];
 
@@ -102,6 +125,14 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options callback:(RCTResponseSenderBlock)
         NSMutableDictionary* result = [NSMutableDictionary dictionary];
         [result setValue:newURL.absoluteString forKey:@"uri"];
         [result setValue:[newURL lastPathComponent] forKey:@"fileName"];
+
+        NSError *attributesError = nil;
+        NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.path error:&attributesError];
+        if(!attributesError) {
+            [result setValue:[fileAttributes objectForKey:NSFileSize] forKey:@"fileSize"];
+        }
+        [result setValue:[self determineMimeType:newURL.path] forKey:@"mimeType"];
+
         [pickResponse addObject:result];
     }];
 

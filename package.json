@@ -1,6 +1,6 @@
 {
   "name": "react-native-open-doc",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "React Native module for openning documents",
   "main": "index.js",
   "scripts": {

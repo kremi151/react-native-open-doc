@@ -50,7 +50,7 @@ Share files on Android (for iOS use the react-native Share.share({ url: selected
   	```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
   	```
-      compile project(':react-native-open-doc')
+      implementation project(':react-native-open-doc')
   	```
 4. Define a FileProvider
 

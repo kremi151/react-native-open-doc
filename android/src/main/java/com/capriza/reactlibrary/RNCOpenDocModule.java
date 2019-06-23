@@ -177,7 +177,10 @@ public class RNCOpenDocModule extends ReactContextBaseJavaModule implements Acti
   }
 
   private void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode != PICK_REQUEST_CODE || resultCode == Activity.RESULT_CANCELED) {
+    if (requestCode != PICK_REQUEST_CODE || callback == null) {
+      return;
+    }
+    if (resultCode == Activity.RESULT_CANCELED) {
       callback.invoke(null, null);
       return;
     }

@@ -52,6 +52,15 @@ RCT_EXPORT_METHOD(open: (NSURL *)path resolver:(RCTPromiseResolveBlock)resolve r
     }
 }
 
+RCT_EXPORT_METHOD(openWith: (NSURL *)path resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [self openWith:path];
+    } @finally {
+        resolve(@true);
+    }
+}
+
 - (void) openWith:(NSURL *)path
 {
     self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:path];
